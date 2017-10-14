@@ -73,6 +73,7 @@ import ch.deletescape.lawnchair.badge.FolderBadgeInfo;
 import ch.deletescape.lawnchair.config.FeatureFlags;
 import ch.deletescape.lawnchair.dragndrop.DragLayer;
 import ch.deletescape.lawnchair.dragndrop.DragView;
+import ch.deletescape.lawnchair.graphics.IconPalette;
 import ch.deletescape.lawnchair.util.Thunk;
 
 /**
@@ -814,7 +815,8 @@ public class FolderIcon extends FrameLayout implements FolderListener {
             this.mTempBounds.set(save, saveLayer, save + size, size + saveLayer);
             float max = Math.max(0.0f, this.mBadgeScale - this.mBackground.getScaleProgress());
             this.mTempSpaceForBadgeOffset.set(getWidth() - this.mTempBounds.right, this.mTempBounds.top);
-            this.mBadgeRenderer.draw(canvas, this.mBadgeInfo, this.mTempBounds, max, this.mTempSpaceForBadgeOffset);
+            IconPalette badgePalette = IconPalette.getFolderBadgePalette(getResources());
+            this.mBadgeRenderer.draw(canvas, badgePalette,this.mBadgeInfo, this.mTempBounds, max, this.mTempSpaceForBadgeOffset);
         }
 
         canvas.restore();

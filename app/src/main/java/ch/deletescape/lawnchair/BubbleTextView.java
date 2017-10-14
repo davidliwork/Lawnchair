@@ -523,7 +523,7 @@ public class BubbleTextView extends TextView
                 int scrollY = getScrollY();
                 canvas.translate((float) scrollX, (float) scrollY);
                 mIconPalette = ((FastBitmapDrawable) this.mIcon).getIconPalette();
-                mBadgeRenderer.draw(canvas, mBadgeInfo, mTempIconBounds, mBadgeScale, mTempSpaceForBadgeOffset, mIconPalette);
+                mBadgeRenderer.draw(canvas, mIconPalette,mBadgeInfo, mTempIconBounds, mBadgeScale, mTempSpaceForBadgeOffset);
                 canvas.translate((float) (-scrollX), (float) (-scrollY));
             }
         }
