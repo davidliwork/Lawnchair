@@ -3790,7 +3790,7 @@ public class Workspace extends PagedView
 
     public interface ItemOperator {
         /**
-         * Process the next itemInfo, possibly with side-effect on the next item.
+         * ProcessManager the next itemInfo, possibly with side-effect on the next item.
          *
          * @param info info for the shortcut
          * @param view view for the shortcut

@@ -419,7 +419,7 @@ public class LauncherModel extends BroadcastReceiver
             return;
         }
 
-        // Process the newly added applications and add them to the database first
+        // ProcessManager the newly added applications and add them to the database first
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -533,7 +533,7 @@ public class LauncherModel extends BroadcastReceiver
         if (workspaceApps.isEmpty()) {
             return;
         }
-        // Process the newly added applications and add them to the database first
+        // ProcessManager the newly added applications and add them to the database first
         Runnable r = new Runnable() {
             @Override
             public void run() {

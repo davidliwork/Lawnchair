@@ -82,7 +82,7 @@ public class FocusHelper {
             final boolean isLayoutRtl = Utilities.isRtl(v.getResources());
 
             int[][] matrix = FocusLogic.createSparseMatrix(cellLayout);
-            // Process focus.
+            // ProcessManager focus.
             int newIconIndex = FocusLogic.handleKeyEvent(keyCode, matrix, iconIndex, pageIndex,
                     pageCount, isLayoutRtl);
             if (newIconIndex == FocusLogic.NOOP) {
@@ -227,7 +227,7 @@ public class FocusHelper {
             parent = hotseatParent;
         }
 
-        // Process the focus.
+        // ProcessManager the focus.
         int newIconIndex = FocusLogic.handleKeyEvent(keyCode, matrix, iconIndex, pageIndex,
                 pageCount, Utilities.isRtl(v.getResources()));
 
@@ -343,7 +343,7 @@ public class FocusHelper {
             matrix = FocusLogic.createSparseMatrix(iconLayout);
         }
 
-        // Process the focus.
+        // ProcessManager the focus.
         int newIconIndex = FocusLogic.handleKeyEvent(keyCode, matrix, iconIndex, pageIndex,
                 pageCount, Utilities.isRtl(v.getResources()));
         boolean isRtl = Utilities.isRtl(v.getResources());

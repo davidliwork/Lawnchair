@@ -105,16 +105,19 @@ public class BadgeRenderer {
         // Prepare the background and shadow and possible stacking effect.
         mBackgroundPaint.setColorFilter(palette.backgroundColorMatrixFilter);
         int backgroundWithShadowSize = backgroundWithShadow.getHeight(); // Same as width.
-        boolean shouldStack = !isDot && badgeInfo != null
-                && badgeInfo.getNotificationKeys().size() > 1;
-        if (shouldStack) {
-            int offsetDiffX = mStackOffsetX - mOffset;
-            int offsetDiffY = mStackOffsetY - mOffset;
-            canvas.translate(offsetDiffX, offsetDiffY);
-            canvas.drawBitmap(backgroundWithShadow, -backgroundWithShadowSize / 2,
-                    -backgroundWithShadowSize / 2, mBackgroundPaint);
-            canvas.translate(-offsetDiffX, -offsetDiffY);
-        }
+
+        /**
+         * 源码画重叠，不好看，屏蔽
+         */
+//        boolean shouldStack = !isDot && badgeInfo.getNotificationKeys().size() > 1;
+//        if (shouldStack) {
+//            int offsetDiffX = mStackOffsetX - mOffset;
+//            int offsetDiffY = mStackOffsetY - mOffset;
+//            canvas.translate(offsetDiffX, offsetDiffY);
+//            canvas.drawBitmap(backgroundWithShadow, -backgroundWithShadowSize / 2,
+//                    -backgroundWithShadowSize / 2, mBackgroundPaint);
+//            canvas.translate(-offsetDiffX, -offsetDiffY);
+//        }
         if (isText) {
             canvas.drawBitmap(backgroundWithShadow, -backgroundWithShadowSize / 2,
                     -backgroundWithShadowSize / 2, mBackgroundPaint);

@@ -12,6 +12,7 @@ import android.provider.Settings.Global
 import android.text.TextUtils
 import android.util.Log
 import ch.deletescape.lawnchair.LauncherAppState
+import ch.deletescape.lawnchair.ProcessManager
 import ch.deletescape.lawnchair.Utilities
 import ch.deletescape.lawnchair.preferences.IPreferenceProvider
 import ch.deletescape.lawnchair.preferences.blockingEdit
@@ -27,7 +28,7 @@ class IconShapeOverride {
             if (getAppliedValue(context).savedPref != str) {
                 prefs(context).blockingEdit { overrideIconShape = str }
                 LauncherAppState.getInstance().iconCache.clear()
-                Process.killProcess(Process.myPid())
+                ProcessManager.killProcess()
             }
             return true
         }
