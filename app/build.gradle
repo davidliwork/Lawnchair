@@ -33,15 +33,15 @@ android {
     signingConfigs {
         travis {
             storeFile file("debug.jks")
-            storePassword System.getenv("STORE_PASSWORD")
-            keyAlias "Lawnchair"
-            keyPassword System.getenv("KEY_PASSWORD")
+            storePassword "000000"
+            keyAlias "key"
+            keyPassword "000000"
         }
     }
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 27
-        applicationId "ch.deletescape.lawnchair"
+        applicationId "ch.deletescape.lawnchair.test"
 
         buildConfigField "boolean", "TRAVIS", System.getenv("TRAVIS") ?: "false"
         buildConfigField "boolean", "TAGGED_BUILD", System.getenv("TRAVIS_TAG") ? "true" : "false"
