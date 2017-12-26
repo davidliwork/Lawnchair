@@ -2,7 +2,8 @@ package ch.deletescape.lawnchair.settings.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -30,8 +31,19 @@ public class SubPreference extends Preference implements View.OnLongClickListene
         setFragment("");
     }
 
+    @Override
+    public String getFragment() {
+        return super.getFragment();
+    }
+
     public int getContent() {
         return mLongClick ? mLongClickContent : mContent;
+    }
+
+    @Override
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+        holder.itemView.setOnLongClickListener(this);
     }
 
     @Override
@@ -44,7 +56,8 @@ public class SubPreference extends Preference implements View.OnLongClickListene
     public boolean onLongClick(View view) {
         if (mLongClickContent != 0) {
             mLongClick = true;
-            super.onClick();
+            // This is unfortunately the only way to simulate a click on Support Preferences
+            getPreferenceManager().getOnPreferenceTreeClickListener().onPreferenceTreeClick(this);
             return true;
         } else {
             return false;

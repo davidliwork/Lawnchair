@@ -53,7 +53,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Process;
 import android.os.StrictMode;
 import android.os.UserHandle;
 import android.support.annotation.NonNull;
@@ -81,11 +80,6 @@ import android.widget.Advanceable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.microsoft.azure.mobile.MobileCenter;
-import com.microsoft.azure.mobile.analytics.Analytics;
-import com.microsoft.azure.mobile.crashes.Crashes;
-import com.microsoft.azure.mobile.distribute.Distribute;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -271,6 +265,7 @@ public class Launcher extends Activity
 
     private boolean mPaused = true;
     private boolean mOnResumeNeedsLoad;
+    private boolean mSnowfallEnabled;
     private boolean mPlanesEnabled;
     private ObjectAnimator mPlanesAnimator;
 
@@ -290,7 +285,6 @@ public class Launcher extends Activity
     private boolean mAttached;
 
     private boolean kill;
-    private boolean recreate;
     private boolean reloadIcons;
     private boolean updateWallpaper = true;
 
@@ -375,9 +369,6 @@ public class Launcher extends Activity
 
         setScreenOrientation();
 
-        if (!BuildConfig.MOBILE_CENTER_KEY.equalsIgnoreCase("null"))
-            MobileCenter.start(getApplication(), BuildConfig.MOBILE_CENTER_KEY, Analytics.class, Crashes.class, Distribute.class);
-
         LauncherAppState app = LauncherAppState.getInstance();
         app.setMLauncher(this);
 
@@ -410,6 +401,7 @@ public class Launcher extends Activity
 
         setContentView(R.layout.launcher);
 
+        mSnowfallEnabled = Utilities.getPrefs(this).getEnableSnowfall();
         mPlanesEnabled = Utilities.getPrefs(this).getEnablePlanes();
         setupViews();
         mDeviceProfile.layout(this, false /* notifyListeners */);
@@ -440,11 +432,7 @@ public class Launcher extends Activity
         registerReceiver(mUiBroadcastReceiver, filter);
 
         mLauncherTab = new LauncherTab(this);
-
-        if (mSharedPrefs.getRequiresIconCacheReload()) {
-            mSharedPrefs.setRequiresIconCacheReload(false);
-            reloadIcons();
-        }
+        Utilities.showOutdatedLawnfeedPopup(this);
 
         Window window = getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
@@ -475,11 +463,7 @@ public class Launcher extends Activity
         if (mPaused)
             kill = true;
         else
-            ProcessManager.killProcess();
-    }
-
-    public void scheduleRecreate() {
-        recreate = true;
+            Utilities.restartLauncher(getApplicationContext());
     }
 
     public void scheduleUpdateWallpaper() {
@@ -949,13 +933,7 @@ public class Launcher extends Activity
 
         if (kill) {
             kill = false;
-            Log.v("Settings", "Die Motherf*cker!");
-            ProcessManager.killProcess();
-        }
-
-        if (recreate) {
-            recreate = false;
-            recreate();
+            Utilities.restartLauncher(getApplicationContext());
         }
 
         if (updateWallpaper) {
@@ -969,7 +947,7 @@ public class Launcher extends Activity
     private void reloadIcons() {
         mIconCache.pip.updateIconPack();
         mIconCache.clear();
-        ProcessManager.killProcess();
+        Utilities.restartLauncher(getApplicationContext());
     }
 
     @Override
@@ -1150,6 +1128,15 @@ public class Launcher extends Activity
         mQsbContainer = mDragLayer.findViewById(R.id.qsb_container);
         mWorkspace.initParentViews(mDragLayer);
 
+        if (mSnowfallEnabled) {
+            Log.d(TAG, "inflating snowfall");
+            if (!Utilities.isBlacklistedAppInstalled(this)) {
+                getLayoutInflater().inflate(mPlanesEnabled ? R.layout.snowfall_planes : R.layout.snowfall, (ViewGroup) findViewById(R.id.launcher_background), true);
+            } else {
+                getLayoutInflater().inflate(R.layout.snowfall_smiles, (ViewGroup) findViewById(R.id.launcher_background), true);
+            }
+        }
+
         if (mPlanesEnabled) {
             Log.d(TAG, "inflating planes");
             getLayoutInflater().inflate(R.layout.planes, (ViewGroup) mLauncherView, true);
@@ -1172,7 +1159,6 @@ public class Launcher extends Activity
         setupOverviewPanel();
 
         // Setup the workspace
-        mWorkspace.setHapticFeedbackEnabled(Utilities.getPrefs(this).getEnableHapticFeedback());
         mWorkspace.setOnLongClickListener(this);
         mWorkspace.setup(mDragController);
         // Until the workspace is bound, ensure that we keep the wallpaper offset locked to the

@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
         android:key="pref_enableBackportShortcuts"
         android:title="@string/pref_backport_shortcuts"
         android:summary="@string/shortcut_backport_warning" />
+
+    <SwitchPreference
+        android:key="pref_enableScreenRotation"
+        android:title="@string/enable_screen_rotation"
+        android:defaultValue="false"
+        android:disableDependentsState="true"
+        android:persistent="true" />
 
     <SwitchPreference
         android:key="pref_pinchToOverview"
@@ -37,12 +44,6 @@
         android:persistent="true" />
 
     <SwitchPreference
-        android:key="pref_enableHapticFeedback"
-        android:title="@string/haptic_feedback_pref_title"
-        android:defaultValue="false"
-        android:persistent="true" />
-
-    <SwitchPreference
         android:key="pref_keepScrollState"
         android:title="@string/keep_scroll_state_pref_title"
         android:summary="@string/keep_scroll_state_pref_summary"
@@ -69,4 +70,10 @@
         android:title="@string/lock_desktop"
         android:defaultValue="false"
         android:persistent="true" />
-</PreferenceScreen>
+    
+    <ch.deletescape.lawnchair.preferences.GoogleNowPreference
+        android:key="pref_showGoogleNowTab"
+        android:persistent="true"
+        android:title="@string/show_google_now_tab_pref_title"
+        android:defaultValue="true" />
+</android.support.v7.preference.PreferenceScreen>

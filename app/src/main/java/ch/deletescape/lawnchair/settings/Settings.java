@@ -54,9 +54,6 @@ public class Settings implements SharedPreferences.OnSharedPreferenceChangeListe
                     mLauncher.getHotseat().updateColor(ec, true);
                     mLauncher.getWorkspace().getPageIndicator().updateColor(ec);
                     break;
-                case PreferenceFlags.KEY_PREF_HAPTIC_FEEDBACK:
-                    mLauncher.getWorkspace().setHapticFeedbackEnabled(prefs.getBoolean(key, false));
-                    break;
                 case PreferenceFlags.KEY_PREF_ALL_APPS_OPACITY:
                     applyAllAppsOpacity(preferences);
                     break;
@@ -105,8 +102,7 @@ public class Settings implements SharedPreferences.OnSharedPreferenceChangeListe
                 case PreferenceFlags.KEY_PREF_DRAWER_CUSTOM_LABEL_COLOR_HUE:
                 case PreferenceFlags.KEY_PREF_DRAWER_CUSTOM_LABEL_COLOR_VARITATION:
                 case PreferenceFlags.KEY_PREF_DRAWER_VERTICAL_LAYOUT:
-                    mLauncher.scheduleRecreate();
-                    break;
+                case PreferenceFlags.KEY_ENABLE_PHYSICS:
                 case PreferenceFlags.KEY_PREF_ICON_SCALE:
                 case PreferenceFlags.KEY_PREF_HOTSEAT_ICON_SCALE:
                 case PreferenceFlags.KEY_PREF_HOTSEAT_HEIGHT_SCALE:
@@ -120,6 +116,10 @@ public class Settings implements SharedPreferences.OnSharedPreferenceChangeListe
                 case PreferenceFlags.KEY_PREF_NUM_ROWS_DRAWER:
                 case PreferenceFlags.KEY_PREF_HOTSEAT_SHOW_ARROW:
                 case PreferenceFlags.KEY_PREF_HOTSEAT_SHOW_PAGE_INDICATOR:
+                case PreferenceFlags.KEY_TWO_ROW_DOCK:
+                case PreferenceFlags.KEY_PREF_SNOWFALL:
+                case PreferenceFlags.KEY_PREF_SNOWFLAKE_SIZE_SCALE:
+                case PreferenceFlags.KEY_PREF_SNOWFLAKES_NUM:
                     mLauncher.scheduleKill();
                 case PreferenceFlags.KEY_BACKPORT_ADAPTIVE_ICONS:
                     mLauncher.scheduleReloadIcons();

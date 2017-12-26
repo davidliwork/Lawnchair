@@ -18,33 +18,33 @@
 package ch.deletescape.lawnchair.settings.ui;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.Random;
 
 import ch.deletescape.lawnchair.BuildConfig;
 import ch.deletescape.lawnchair.DumbImportExportTask;
@@ -55,28 +55,36 @@ import ch.deletescape.lawnchair.Utilities;
 import ch.deletescape.lawnchair.blur.BlurWallpaperProvider;
 import ch.deletescape.lawnchair.config.FeatureFlags;
 import ch.deletescape.lawnchair.graphics.IconShapeOverride;
+import ch.deletescape.lawnchair.overlay.ILauncherClient;
 import ch.deletescape.lawnchair.preferences.IPreferenceProvider;
 import ch.deletescape.lawnchair.preferences.PreferenceFlags;
 
 /**
  * Settings activity for Launcher. Currently implements the following setting: Allow rotation
  */
-public class SettingsActivity extends AppCompatActivity implements PreferenceFragment.OnPreferenceStartFragmentCallback, SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsActivity extends AppCompatActivity implements
+        PreferenceFragmentCompat.OnPreferenceStartFragmentCallback, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static IPreferenceProvider sharedPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FeatureFlags.INSTANCE.applyDarkTheme(this);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_settings);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         if (FeatureFlags.INSTANCE.getCurrentTheme() != 2)
             BlurWallpaperProvider.Companion.applyBlurBackground(this);
 
         if (savedInstanceState == null) {
             // Display the fragment as the main content.
-            getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new LauncherSettingsFragment())
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content, new LauncherSettingsFragment())
+
                     .commit();
         }
 
@@ -86,13 +94,18 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     }
 
     @Override
-    public boolean onPreferenceStartFragment(PreferenceFragment caller, Preference pref) {
+    public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
+        Fragment fragment;
         if (pref instanceof SubPreference) {
-            Fragment fragment = SubSettingsFragment.newInstance(((SubPreference) pref));
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            fragment = SubSettingsFragment.newInstance(((SubPreference) pref));
+        } else {
+            fragment = Fragment.instantiate(this, pref.getFragment());
+        }
+        if (fragment != null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             setTitle(pref.getTitle());
             transaction.setCustomAnimations(R.animator.fly_in, R.animator.fade_out, R.animator.fade_in, R.animator.fly_out);
-            transaction.replace(android.R.id.content, fragment);
+            transaction.replace(R.id.content, fragment);
             transaction.addToBackStack("PreferenceFragment");
             transaction.commit();
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -108,7 +121,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     }
 
     private void updateUpButton() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(getFragmentManager().getBackStackEntryCount() != 0);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() != 0);
     }
 
     @Override
@@ -128,16 +141,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         }
     }
 
-    private abstract static class BaseFragment extends PreferenceFragment implements AdapterView.OnItemLongClickListener {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View view = super.onCreateView(inflater, container, savedInstanceState);
-            if (view == null) return null;
-            ListView listView = view.findViewById(android.R.id.list);
-            listView.setOnItemLongClickListener(this);
-            return view;
-        }
+    private abstract static class BaseFragment extends PreferenceFragmentCompat implements AdapterView.OnItemLongClickListener {
 
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -167,6 +171,17 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View view = super.onCreateView(inflater, container, savedInstanceState);
+            setDivider(null);
+            return view;
+        }
+
+        @Override
+        public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(R.xml.launcher_preferences);
         }
 
@@ -185,9 +200,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
-            addPreferencesFromResource(getContent());
-            if (getContent() == R.xml.launcher_pixel_style_preferences) {
+            if (getContent() == R.xml.launcher_theme_preferences) {
                 Preference prefWeatherEnabled = findPreference(FeatureFlags.KEY_PREF_WEATHER);
                 prefWeatherEnabled.setOnPreferenceChangeListener(this);
                 Preference prefWeatherProvider = findPreference(PreferenceFlags.KEY_WEATHER_PROVIDER);
@@ -207,19 +220,31 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                 }
             } else if (getContent() == R.xml.launcher_about_preferences) {
                 findPreference("about_version").setSummary(BuildConfig.VERSION_NAME);
-                if (BuildConfig.TRAVIS && !BuildConfig.TAGGED_BUILD) {
+                if (BuildConfig.TRAVIS && !BuildConfig.BUILD_TYPE.equalsIgnoreCase("stable")) {
                     findPreference("about_changelog").setSummary(Utilities.getChangelog());
                 }
             } else if (getContent() == R.xml.launcher_behavior_preferences) {
                 if (Utilities.ATLEAST_NOUGAT_MR1 && BuildConfig.TRAVIS) {
                     getPreferenceScreen().removePreference(findPreference(FeatureFlags.KEY_PREF_ENABLE_BACKPORT_SHORTCUTS));
                 }
-            } else if (getContent() == R.xml.launcher_hidden_preferences) {
-                Preference eminemPref = findPreference("random_eminem_quote");
-                String[] eminemQuotes = getResources().getStringArray(R.array.eminem_quotes);
-                int index = new Random().nextInt(eminemQuotes.length);
-                eminemPref.setSummary(eminemQuotes[index]);
+
+                // Remove Google Now tab option when Lawnfeed is not installed
+                int enabledState = ILauncherClient.Companion.getEnabledState(getContext());
+                if (BuildConfig.ENABLE_LAWNFEED && enabledState == ILauncherClient.Companion.DISABLED_NO_PROXY_APP) {
+                    getPreferenceScreen().removePreference(findPreference(FeatureFlags.KEY_PREF_SHOW_NOW_TAB));
+                }
+            } else if (getContent() == R.xml.launcher_snowfall_preferences) {
+                Preference prefSnowfallEnabled = findPreference(FeatureFlags.KEY_PREF_SNOWFALL);
+                prefSnowfallEnabled.setOnPreferenceChangeListener(this);
+                if (Utilities.getPrefs(getActivity()).getEnableSnowfall()) {
+                    prefSnowfallEnabled.setSummary(R.string.snowfall_enabled);
+                }
             }
+        }
+
+        @Override
+        public void onCreatePreferences(Bundle bundle, String s) {
+            addPreferencesFromResource(getContent());
         }
 
         private void updateEnabledState(String weatherProvider) {
@@ -228,6 +253,11 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             Preference prefWeatherApiKey = findPreference(PreferenceFlags.KEY_WEATHER_API_KEY);
             prefWeatherCity.setEnabled(!awarenessApiEnabled);
             prefWeatherApiKey.setEnabled(!awarenessApiEnabled);
+        }
+
+        private void updateSnowfallSummary(boolean enabled) {
+            Preference prefEnableSnowfall = findPreference(FeatureFlags.KEY_PREF_SNOWFALL);
+            prefEnableSnowfall.setSummary(enabled ? R.string.snowfall_enabled : R.string.enable_snowfall_summary);
         }
 
         @Override
@@ -243,6 +273,9 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                             checkPermission(Manifest.permission.ACCESS_FINE_LOCATION);
                         }
                         break;
+                    case FeatureFlags.KEY_PREF_SNOWFALL:
+                        updateSnowfallSummary((boolean) newValue);
+                        break;
                 }
                 return true;
             }
@@ -250,7 +283,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         }
 
         @Override
-        public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        public boolean onPreferenceTreeClick(Preference preference) {
             if (preference.getKey() != null) {
                 switch (preference.getKey()) {
                     case "kill":
@@ -276,6 +309,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                     case "import_prefs":
                         if (checkStoragePermission()) {
                             DumbImportExportTask.importPrefs(getActivity());
+                            LauncherAppState.getInstance().getLauncher().scheduleReloadIcons();
                             LauncherAppState.getInstance().getLauncher().scheduleKill();
                         }
                         break;
@@ -285,17 +319,25 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         }
                         break;
                     case "about_translators":
-                        Dialog dialog = new Dialog(getActivity());
-                        dialog.setTitle(R.string.about_translators);
-                        dialog.setContentView(R.layout.dialog_translators);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle(R.string.about_translators);
+                        builder.setView(R.layout.dialog_translators);
+                        builder.setNeutralButton("OK", null);
+                        AlertDialog dialog = builder.create();
                         dialog.show();
+
+                        // Custom LayoutParams for neutral button of AlertDialog
+                        final Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                        LinearLayout.LayoutParams neutralButtonLL = (LinearLayout.LayoutParams) neutralButton.getLayoutParams();
+                        neutralButtonLL.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                        neutralButton.setLayoutParams(neutralButtonLL);
                         break;
                     default:
-                        return false;
+                        return super.onPreferenceTreeClick(preference);
                 }
                 return true;
             }
-            return false;
+            return super.onPreferenceTreeClick(preference);
         }
 
         private boolean checkStoragePermission() {
@@ -333,5 +375,9 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             return fragment;
         }
 
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            return super.onCreateView(FeatureFlags.INSTANCE.getLayoutInflator(inflater), container, savedInstanceState);
+        }
     }
 }

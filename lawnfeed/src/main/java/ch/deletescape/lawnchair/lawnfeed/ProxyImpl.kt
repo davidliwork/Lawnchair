@@ -1,9 +1,6 @@
 package ch.deletescape.lawnchair.lawnfeed
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Binder
@@ -15,6 +12,7 @@ import ch.deletescape.lawnchair.launcherclient.ILauncherClientProxy
 import ch.deletescape.lawnchair.launcherclient.ILauncherClientProxyCallback
 import ch.deletescape.lawnchair.launcherclient.LauncherClientProxyConnection
 import ch.deletescape.lawnchair.launcherclient.WindowLayoutParams
+import ch.deletescape.lawnchair.lawnfeed.updater.Updater
 import com.google.android.libraries.launcherclient.ILauncherOverlay
 import com.google.android.libraries.launcherclient.ILauncherOverlayCallback
 
@@ -131,10 +129,22 @@ class ProxyImpl(val context: Context) : ILauncherClientProxy.Stub() {
         overlay?.windowDetached(isChangingConfigurations)
     }
 
+    override fun onQsbClick(intent: Intent?) {
+        enforcePermission()
+        context.sendOrderedBroadcast(intent, null, object : BroadcastReceiver() {
+
+            @Suppress("NAME_SHADOWING")
+            override fun onReceive(context: Context?, intent: Intent?) {
+                proxyCallback.onQsbResult(resultCode)
+            }
+        }, null, 0, null, null)
+    }
+
     override fun init(callback: ILauncherClientProxyCallback): Int {
-        allowed = "ch.deletescape.lawnchair" == callingPackage
+        allowed = "ch.deletescape.lawnchair.plah" == callingPackage || "ch.deletescape.lawnchair" == callingPackage
         enforcePermission()
         proxyCallback = callback
+        Updater.checkUpdate(context)
         ProxyImpl.getVersion(context)
         return version
     }
@@ -148,11 +158,13 @@ class ProxyImpl(val context: Context) : ILauncherClientProxy.Stub() {
 
     inner class OverlayCallbacks : ILauncherOverlayCallback.Stub() {
         override fun overlayScrollChanged(progress: Float) {
-            proxyCallback.overlayScrollChanged(progress)
+            if (!destroyed)
+                proxyCallback.overlayScrollChanged(progress)
         }
 
         override fun overlayStatusChanged(status: Int) {
-            proxyCallback.overlayStatusChanged(status)
+            if (!destroyed)
+                proxyCallback.overlayStatusChanged(status)
         }
 
     }
@@ -210,6 +222,8 @@ class ProxyImpl(val context: Context) : ILauncherClientProxy.Stub() {
     fun onUnbind() {
         Log.d(TAG, "onUnbind")
         destroyed = true
+        if (serviceConnected)
+            context.unbindService(serviceConnection)
         if (sApplicationConnection != null)
             context.unbindService(sApplicationConnection)
         sApplicationConnection = null

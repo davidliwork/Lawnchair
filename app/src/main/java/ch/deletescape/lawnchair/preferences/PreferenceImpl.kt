@@ -6,14 +6,18 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.view.View
+import ch.deletescape.lawnchair.BuildConfig
 import ch.deletescape.lawnchair.Launcher
 import ch.deletescape.lawnchair.LauncherFiles
 import ch.deletescape.lawnchair.Utilities
 import ch.deletescape.lawnchair.config.FeatureFlags
 import ch.deletescape.lawnchair.dynamicui.ExtractedColors
+import java.io.File
 import kotlin.reflect.KProperty
 
 open class PreferenceImpl(context: Context) : IPreferenceProvider {
+    val context = context.applicationContext!!
+
     override val workSpaceLabelColor by IntPref(PreferenceFlags.KEY_PREF_WS_LABEL_COLOR, Color.WHITE)
     override val allAppsLabelColor by IntPref(PreferenceFlags.KEY_PREF_ALL_APPS_LABEL_COLOR, Color.BLACK)
 
@@ -41,6 +45,9 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
     override val verticalDrawerLayout by BooleanPref(PreferenceFlags.KEY_PREF_DRAWER_VERTICAL_LAYOUT, false)
     override val iconLabelsInTwoLines by BooleanPref(PreferenceFlags.KEY_ICON_LABELS_IN_TWO_LINES, false)
     override val animatedClockIconAlternativeClockApps by BooleanPref(PreferenceFlags.KEY_ANIMATED_CLOCK_ICON_ALTERNATIVE_CLOCK_APPS, false)
+    override val enablePhysics by BooleanPref(PreferenceFlags.KEY_ENABLE_PHYSICS, true)
+    override val snowflakeSizeScale by FloatPref(PreferenceFlags.KEY_PREF_SNOWFLAKE_SIZE_SCALE, 1f)
+    override val snowflakesNum by StringPref(PreferenceFlags.KEY_PREF_SNOWFLAKES_NUM, "200")
 
     override fun lightStatusBarKeyCache(default: Boolean): Boolean {
         return getBoolean(PreferenceFlags.KEY_LIGHT_STATUS_BAR, default)
@@ -153,13 +160,14 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
     override val weatherProvider by StringPref(PreferenceFlags.KEY_WEATHER_PROVIDER, PreferenceFlags.PREF_WEATHER_PROVIDER_AWARENESS)
     override var previousBuildNumber by MutableIntPref(PreferenceFlags.KEY_PREVIOUS_BUILD_NUMBER, 0)
 
-    override fun appVisibility(context: Context, key: String, visible: Boolean, commit: Boolean) {
-        commitOrApply(sharedPrefs.edit().putBoolean(PreferenceFlags.KEY_APP_VISIBILITY_PREFIX + key, visible), commit)
-    }
-
-    override fun appVisibility(context: Context, key: String): Boolean {
-        return sharedPrefs.getBoolean(PreferenceFlags.KEY_APP_VISIBILITY_PREFIX + key, true)
-    }
+    override var hiddenAppsSet: Set<String>
+        get() {
+            // We need to copy the set, as SharedPreferences doesn't return a copy of the Set object
+            return HashSet<String>(sharedPrefs.getStringSet(PreferenceFlags.KEY_HIDDEN_APPS_SET, HashSet<String>()))
+        }
+        set(value) {
+            sharedPrefs.edit().putStringSet(PreferenceFlags.KEY_HIDDEN_APPS_SET, value).apply()
+        }
 
     override fun alternateIcon(key: String, alternateIcon: String, commit: Boolean) {
         commitOrApply(sharedPrefs.edit().putString(PreferenceFlags.KEY_ALTERNATE_ICON_PREFIX + key, alternateIcon), commit)
@@ -173,8 +181,6 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
     override val blurRadius by FloatPref(PreferenceFlags.KEY_BLUR_RADIUS, 75f)
 
     override var appsViewShown by MutableBooleanPref(PreferenceFlags.APPS_VIEW_SHOWN, false)
-
-    override var requiresIconCacheReload by MutableBooleanPref(PreferenceFlags.KEY_REQUIRES_ICON_CACHE_RELOAD, true)
 
     override val darkTheme: Boolean by BooleanPref(FeatureFlags.KEY_PREF_DARK_THEME, false)
     override val pulldownAction by StringPref(FeatureFlags.KEY_PREF_PULLDOWN_ACTION, "1")
@@ -192,14 +198,16 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
     override val showWeather by BooleanPref(FeatureFlags.KEY_PREF_WEATHER, false)
     override val lockDesktop by BooleanPref(FeatureFlags.KEY_PREF_LOCK_DESKTOP, false)
     override val animatedClockIcon by BooleanPref(FeatureFlags.KEY_PREF_ANIMATED_CLOCK_ICON, false)
+    override val enableSnowfall by BooleanPref(FeatureFlags.KEY_PREF_SNOWFALL, false)
 
     override val pinchToOverview by BooleanPref(FeatureFlags.KEY_PREF_PINCH_TO_OVERVIEW, true)
     override val centerWallpaper by BooleanPref(PreferenceFlags.KEY_CENTER_WALLPAPER, true)
-    override val popupCardTheme by BooleanPref(PreferenceFlags.KEY_POPUP_CARD_THEME, false)
+    override val popupCardTheme = false
     override val lightStatusBar by BooleanPref(FeatureFlags.KEY_PREF_LIGHT_STATUS_BAR, false)
     override val hotseatShouldUseExtractedColors by BooleanPref(FeatureFlags.KEY_PREF_HOTSEAT_EXTRACTED_COLORS, true)
     override val hotseatShowArrow by BooleanPref(PreferenceFlags.KEY_PREF_HOTSEAT_SHOW_ARROW, true)
     override val hotseatShowPageIndicator by BooleanPref(PreferenceFlags.KEY_PREF_HOTSEAT_SHOW_PAGE_INDICATOR, true)
+    override val twoRowDock by BooleanPref(PreferenceFlags.KEY_TWO_ROW_DOCK, false)
 
     override fun hotseatShouldUseExtractedColorsCache(default: Boolean): Boolean {
         return getBoolean(PreferenceFlags.KEY_HOTSEAT_SHOULD_USE_EXTRACTED_COLORS_CACHE, default)
@@ -209,7 +217,6 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
         setBoolean(PreferenceFlags.KEY_HOTSEAT_SHOULD_USE_EXTRACTED_COLORS_CACHE, value, commit)
     }
 
-    override val enableHapticFeedback by BooleanPref(FeatureFlags.KEY_PREF_HAPTIC_FEEDBACK, false)
     override val keepScrollState by BooleanPref(FeatureFlags.KEY_PREF_KEEP_SCROLL_STATE, false)
     override val useFullWidthSearchBar by BooleanPref(FeatureFlags.KEY_FULL_WIDTH_SEARCHBAR, false)
     override val showVoiceSearchButton by BooleanPref(FeatureFlags.KEY_SHOW_VOICE_SEARCH_BUTTON, false)
@@ -220,7 +227,7 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
     override val hideAppLabels by BooleanPref(FeatureFlags.KEY_PREF_HIDE_APP_LABELS, false)
     override val hideAllAppsAppLabels by BooleanPref(PreferenceFlags.KEY_PREF_HIDE_ALL_APPS_APP_LABELS, false)
     override val allowFullWidthWidgets by BooleanPref(FeatureFlags.KEY_PREF_FULL_WIDTH_WIDGETS, false)
-    override val showGoogleNowTab by BooleanPref(FeatureFlags.KEY_PREF_SHOW_NOW_TAB, true)
+    override val showGoogleNowTab by BooleanPref(FeatureFlags.KEY_PREF_SHOW_NOW_TAB, !BuildConfig.ENABLE_LAWNFEED)
     override val transparentHotseat by BooleanPref(FeatureFlags.KEY_PREF_TRANSPARENT_HOTSEAT, false)
     override val enableDynamicUi by BooleanPref(FeatureFlags.KEY_PREF_ENABLE_DYNAMIC_UI, false)
     override val enableBlur by BooleanPref(FeatureFlags.KEY_PREF_ENABLE_BLUR, false)
@@ -250,8 +257,7 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
     // Helper functions and class
     // ----------------
 
-    private var sharedPrefs: SharedPreferences = context.applicationContext.getSharedPreferences(
-            LauncherFiles.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+    private val sharedPrefs: SharedPreferences = getSharedPrefs()
 
     private fun setBoolean(pref: String, value: Boolean, commit: Boolean) {
         commitOrApply(sharedPrefs.edit().putBoolean(pref, value), commit)
@@ -391,6 +397,17 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
 
     private interface MutablePrefDelegate<T> {
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T)
+    }
+
+    fun getSharedPrefs() : SharedPreferences {
+        val dir = context.cacheDir.parent
+        val oldFile = File(dir, "shared_prefs/" + LauncherFiles.OLD_SHARED_PREFERENCES_KEY + ".xml")
+        val newFile = File(dir, "shared_prefs/" + LauncherFiles.SHARED_PREFERENCES_KEY + ".xml")
+        if (oldFile.exists() && !newFile.exists()) {
+            oldFile.renameTo(newFile)
+            oldFile.delete()
+        }
+        return context.applicationContext.getSharedPreferences(LauncherFiles.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
     }
 
     private abstract inner class PrefDelegate<T>(val key: String?, val defaultValue: T) {

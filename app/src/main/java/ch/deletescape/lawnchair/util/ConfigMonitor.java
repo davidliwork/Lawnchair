@@ -23,7 +23,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.util.Log;
 
-import ch.deletescape.lawnchair.ProcessManager;
+import ch.deletescape.lawnchair.Utilities;
 
 /**
  * {@link BroadcastReceiver} which watches configuration changes and
@@ -49,7 +49,7 @@ public class ConfigMonitor extends BroadcastReceiver {
         if (mFontScale != config.fontScale || mDensity != getDensity(config)) {
             Log.d("ConfigMonitor", "Configuration changed, restarting launcher");
             mContext.unregisterReceiver(this);
-            ProcessManager.killProcess();
+            Utilities.restartLauncher(context);
         }
     }
 
