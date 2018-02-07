@@ -1,0 +1,10 @@
+pipeline:
+  build:
+    image: runmymind/docker-android-sdk:alpine-standalone
+    environment:
+      - MAJOR_MINOR=1.1.0
+    commands:
+      - bash ./gradlew assembleDebug check;
+
+branches:
+  include: [ alpha ]
