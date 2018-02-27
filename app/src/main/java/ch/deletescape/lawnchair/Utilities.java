@@ -17,7 +17,9 @@
 package ch.deletescape.lawnchair;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -54,7 +56,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.UserHandle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
