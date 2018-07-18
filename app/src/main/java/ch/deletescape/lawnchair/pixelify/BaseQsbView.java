@@ -16,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
+import ch.deletescape.lawnchair.BuildConfig;
 import ch.deletescape.lawnchair.DeviceProfile;
 import ch.deletescape.lawnchair.Launcher;
 import ch.deletescape.lawnchair.R;
@@ -49,7 +50,7 @@ public abstract class BaseQsbView extends FrameLayout implements OnClickListener
     }
 
     public void applyVoiceSearchPreference() {
-        showMic = Utilities.getPrefs(getContext()).getShowVoiceSearchButton();
+        showMic = Utilities.getPrefs(getContext()).getShowVoiceSearchButton() && Utilities.getPrefs(getContext()).getShowSearchPill();
         boolean useWhiteLogo = Utilities.getPrefs(getContext()).getUseWhiteGoogleIcon();
         int qsbView = getQsbView(showMic);
         if (qsbView != mQsbViewId || mUseWhiteLogo != useWhiteLogo) {
@@ -107,7 +108,8 @@ public abstract class BaseQsbView extends FrameLayout implements OnClickListener
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String str) {
         if (FeatureFlags.KEY_SHOW_VOICE_SEARCH_BUTTON.equals(str) ||
-                FeatureFlags.KEY_PREF_WHITE_GOOGLE_ICON.equals(str)) {
+                FeatureFlags.KEY_PREF_WHITE_GOOGLE_ICON.equals(str) ||
+                FeatureFlags.KEY_SHOW_SEARCH_PILL.equals(str)) {
             applyVoiceSearchPreference();
             applyVisibility();
         }
@@ -126,13 +128,23 @@ public abstract class BaseQsbView extends FrameLayout implements OnClickListener
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.mic_icon) {
-            startQsbActivity(VOICE_ASSIST);
-        } else if (mLauncher.getClient() instanceof LawnfeedClient) {
-            ((LawnfeedClient) mLauncher.getClient()).onQsbClick(bm("com.google.nexuslauncher.FAST_TEXT_SEARCH"), new Receiver(this));
-        } else {
-            getContext().sendOrderedBroadcast(bm("com.google.nexuslauncher.FAST_TEXT_SEARCH"), null, new C0287l(this), null, 0, null, null);
+        switch (view.getId()) {
+            case R.id.mic_icon:
+                startQsbActivity(VOICE_ASSIST);
+                break;
+            default:
+                if (BuildConfig.ENABLE_LAWNFEED) {
+                    if (mLauncher.isClientConnected()) {
+                        ((LawnfeedClient) mLauncher.getClient()).onQsbClick(bm("com.google.nexuslauncher.FAST_TEXT_SEARCH"), new Receiver(this));
+                    } else {
+                        startQsbActivity(TEXT_ASSIST);
+                    }
+                } else {
+                    getContext().sendOrderedBroadcast(bm("com.google.nexuslauncher.FAST_TEXT_SEARCH"), null, new C0287l(this), null, 0, null, null);
+                }
+                break;
         }
+
     }
 
     private Intent bm(String str) {
@@ -232,11 +244,13 @@ public abstract class BaseQsbView extends FrameLayout implements OnClickListener
     }
 
     private void applyVisibility() {
-        boolean isQsbAppEnabled = PackageManagerHelper.isAppEnabled(getContext().getPackageManager(), "com.google.android.googlequicksearchbox", 0);
+        boolean isQsbAppEnabled = PackageManagerHelper.isAppEnabled(getContext().getPackageManager(), "com.google.android.googlequicksearchbox", 0) && (Utilities.getPrefs(getContext()).getShowSearchPill() || Utilities.getPrefs(getContext()).getUseFullWidthSearchBar());
         int visibility = isQsbAppEnabled ? View.VISIBLE : View.GONE;
+
         if (mQsbView != null) {
             mQsbView.setVisibility(visibility);
         }
+
         if (qsbConnector != null) {
             qsbConnector.setVisibility(visibility);
         }

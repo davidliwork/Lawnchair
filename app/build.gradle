@@ -1,25 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-def getChangelog = { ->
-    def commitRange = System.getenv("TRAVIS_COMMIT_RANGE")
-    if (commitRange) {
-        if (System.getenv("TRAVIS_TAG")) {
-            def tag = System.getenv("TRAVIS_TAG")
-            commitRange = ('git describe --abbrev=0 --tags ' +  tag + '^').execute().text.trim() + '..' + tag
-        }
-
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'log', '--format=%s', commitRange
-            standardOutput = stdout
-        }
-        return stdout.toString().trim().replace("\n", "\\n").replace("\"", "\\\"")
-    } else {
-        return null
-    }
-}
-
 Properties localProps = new Properties()
 File localPropsFile = project.rootProject.file('local.properties')
 if (localPropsFile.exists()) {
@@ -28,7 +9,7 @@ if (localPropsFile.exists()) {
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.2'
+    buildToolsVersion '27.0.3'
 
     signingConfigs {
         travis {
@@ -38,6 +19,7 @@ android {
             keyPassword "000000"
         }
     }
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 27
@@ -46,27 +28,30 @@ android {
         buildConfigField "boolean", "TRAVIS", System.getenv("TRAVIS") ?: "false"
         buildConfigField "boolean", "TAGGED_BUILD", System.getenv("TRAVIS_TAG") ? "true" : "false"
         buildConfigField "int", "TRAVIS_BUILD_NUMBER", System.getenv("TRAVIS_BUILD_NUMBER") ?: "0"
-        buildConfigField "String", "CHANGELOG", "\"${getChangelog()}\""
+        buildConfigField "boolean", "ENABLE_LAWNFEED", "false"
 
         ext.awarenessApiKey = localProps.getProperty('awarenessApiKey') ?: System.getenv("AWARENESS_API_KEY")
         buildConfigField "boolean", "AWARENESS_API_ENABLED", ext.awarenessApiKey ? "true" : "false"
         manifestPlaceholders = [awarenessApiKey: ext.awarenessApiKey ?: "null"]
 
-        buildConfigField "boolean", "ENABLE_LAWNFEED", "false"
-
         if (System.getenv("TRAVIS") == "true") {
             versionCode = Integer.valueOf(System.getenv("TRAVIS_BUILD_NUMBER"))
-            versionName = System.getenv("MAJOR_MINOR") + "." + System.getenv("TRAVIS_BUILD_NUMBER")
+            versionName = System.getenv("MAJOR_MINOR") + (System.getenv("DRONE") ? "-" : ".") + System.getenv("TRAVIS_BUILD_NUMBER")
         } else {
             versionCode 1
             versionName "dev"
         }
     }
+
     buildTypes {
         debug {
             if (System.getenv("TRAVIS") == "true") {
                 minifyEnabled true
                 shrinkResources true
+                if (System.getenv("DRONE") == "true") {
+                    applicationIdSuffix ".ci"
+                }
+
                 proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
                 if (System.getenv("TRAVIS_EVENT_TYPE") != "pull_request") {
                     signingConfig signingConfigs.travis
@@ -75,6 +60,7 @@ android {
                 minifyEnabled false
             }
         }
+
         release {
             applicationIdSuffix ".plah"
             buildConfigField "boolean", "ENABLE_LAWNFEED", "true"
@@ -87,14 +73,21 @@ android {
             }
         }
     }
+
     lintOptions {
         abortOnError false
     }
 }
 
+afterEvaluate {
+    android.applicationVariants.all { variant ->
+        variant.resValue "string", "application_id", variant.applicationId
+    }
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    def supportLibVersion = '27.0.2'
+    def supportLibVersion = '27.1.1'
     implementation "com.android.support:support-v4:${supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
     implementation "com.android.support:palette-v7:${supportLibVersion}"
@@ -103,11 +96,16 @@ dependencies {
     implementation "com.android.support:design:${supportLibVersion}"
     implementation "com.android.support:support-dynamic-animation:${supportLibVersion}"
     implementation 'com.github.KwabenBerko:OpenWeatherMap-Android-Library:v1.1.1'
-    implementation 'com.google.android.gms:play-services-awareness:11.6.2'
+    implementation 'com.google.android.gms:play-services-awareness:15.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.pavelsikun:vintage-chroma:1.5'
     implementation project(':launcherclient')
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.github.florent37:fiftyshadesof:1.0.0'
+    implementation 'me.jfenn:attribouter:0.0.5'
 }
+
 repositories {
     mavenCentral()
 }

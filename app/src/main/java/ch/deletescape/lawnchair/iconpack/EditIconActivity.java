@@ -36,6 +36,7 @@ public class EditIconActivity extends AppCompatActivity implements CustomIconAda
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FeatureFlags.INSTANCE.applyDarkTheme(this);
+        Utilities.setupPirateLocale(this);
 
         Utilities.getPrefs(this).getEnableScreenRotation();
 
@@ -125,7 +126,9 @@ public class EditIconActivity extends AppCompatActivity implements CustomIconAda
     }
 
     private void resetIcon() {
-        setResult(RESULT_OK, new Intent());
+        Intent data = new Intent();
+        data.putExtra("alternateIcon", "-1");
+        setResult(RESULT_OK, data);
         finish();
     }
 
