@@ -244,7 +244,6 @@
   <string name="notifications_header">Notificações</string>
   <string name="widgets_bottom_sheet_title">%1$s widgets</string>
   <!-- About Lawnchair -->
-  <string name="about_text">Lawnchair é um Launcher criado por Till Kottmann (deletescape). Baseado no Launcher3 da AOSP.</string>
   <string name="about_title">Sobre</string>
   <string name="about_pref_summary">Conheça a equipe por trás do Lawnchair</string>
   <string name="changelog_title">Novidades da versão #%d</string>
@@ -296,6 +295,8 @@
   <string name="debug_pref_summary">Refazer imagem dos ícones</string>
   <string name="show_pixel_bar_pref_title">Mostrar a barra superior do Pixel</string>
   <string name="use_wide_searchbar_pref_title">Usar barra de pesquisa circular</string>
+  <string name="show_search_pill_title">Mostrar pílula da Pesquisa do Google</string>
+  <string name="show_date_or_weather_title">Mostrar data/tempo no lado direito</string>
   <string name="show_mic_pref_title">Mostrar botão do Google Assistente</string>
   <string name="use_round_searhbar">Usar barra de pesquisa arredondada</string>
   <string name="pixel_style_icons_pref_title">Usar ícones redondos</string>
@@ -327,7 +328,7 @@
   <string name="default_text">Padrão</string>
   <string name="edit_icon_reset">Redefinir</string>
   <string name="show_top_shadow_title">Escurecer barra de notificação</string>
-  <string name="pref_cat_homescreen">Tela inicial</string>
+  <string name="pref_category_homescreen">Tela inicial</string>
   <string name="theme_pref_title">Tema</string>
   <string name="theme_light">Claro</string>
   <string name="theme_dark">Escuro</string>
@@ -340,6 +341,7 @@
   <string name="pull_down_search">Abrir pesquisa</string>
   <string name="pull_down_apps_search">Abrir pesquisa de aplicativos</string>
   <string name="enable_screen_rotation">Ativar a rotação de tela</string>
+  <string name="use_system_fonts_title">Use fontes do sistema para rótulos</string>
   <!-- Import/Export Strings -->
   <string name="backup_import_title">Restaurar backup</string>
   <string name="backup_export_title">Fazer backup</string>
@@ -381,10 +383,6 @@
   <string name="animated_clock_icon_title">Ícone do relógio animado</string>
   <string name="animated_clock_icon_alternative_clock_apps_title">Ativar animação para apps de relógio alternativos</string>
   <string name="animated_clock_icon_alternative_clock_apps_summary">Ative isso se você não usa o relógio da Google como relógio padrão</string>
-  <string name="about_summary_title">Resumo</string>
-  <string name="about_version">Versão</string>
-  <string name="about_icon_designer">Criador do Ícone</string>
-  <string name="about_contributors_title">Colaboradores</string>
   <string name="location_permission_warn">Permissão de localização necessária para mudar de provedor!</string>
   <string name="num_cols_drawer_pref_title">Número de colunas na exibição na gaveta de aplicativos</string>
   <string name="shortcut_backport_warning">Isto pode ser lento, use a seu próprio risco</string>
@@ -396,11 +394,11 @@
   <string name="pref_all_apps_label_color">Cor do texto dos ícones na gaveta de apps</string>
   <string name="pref_num_rows_drawer">Número de linhas na gaveta de apps</string>
   <string name="center_wallpaper_pref_title">Centralizar papel de parede quando houver apenas uma página</string>
+  <string name="center_wallpaper_pref_summary">Só funciona se a tela inicial usar uma página</string>
   <string name="vertical_drawer_layout_pref_title">Exibir como lista vertical</string>
   <!-- Time format for Weather Widget -->
   <!-- EEEE is the weekday name, MMMM the month name and d the day of the month -->
   <string name="full_wday_month_day_no_year">EEEE, d MMMM</string>
-  <string name="about_translators">Tradutores</string>
   <string name="lock_desktop">Impedir mudanças</string>
   <string name="lawnfeed_not_found">Lawnfeed não instalado</string>
   <string name="google_app_not_found">Aplicativo do Google não instalado</string>
@@ -418,12 +416,84 @@
   <string name="reset_alternative_icons_title">Redefinir os ícones de apps alternativos?</string>
   <string name="reset_alternative_icons">Você tem %1$d apps com ícones alternativos, deseja restaurá-los?</string>
   <string name="error_no_browser">Nenhum navegador encontrado para abrir URLs</string>
-  <string name="snowfall_title">Nevasca</string>
-  <string name="enable_snowfall_title">Permitir neve na tela inicial</string>
-  <string name="enable_snowfall_summary">Pode causar problemas de desempenho.</string>
-  <string name="snowfall_enabled">\"Deixe nevar, deixe nevar, deixe nevar!\"</string>
-  <string name="snowflake_size_scale">Escala de tamanho do floco de neve</string>
-  <string name="snowflakes_num">Número máximo de flocos de neve</string>
+  <!-- Strings for popup dialogs -->
+  <string name="lawnfeed_not_enabled_title">Lawnfeed não habilitado</string>
+  <string name="lawnfeed_not_enabled">Parece que você está tentando abrir a página do Google Now, mas você não ativou a opção nas configurações de comportamento.\n\nVocê quer habilitá-lo agora?</string>
   <string name="lawnfeed_outdated_title">Atualização do Lawnfeed necessária</string>
   <string name="lawnfeed_outdated">Uma nova versão do Lawnfeed é necessária nesta versão do Lawnchair.\n\nAntes de instalar a atualização, você provavelmente precisará desinstalar a versão atual do Lawnfeed.\n\nVocê deseja baixá-la agora?</string>
+  <string name="title_storage_permission_required">Permissão de armazenamento recusada</string>
+  <string name="content_storage_permission_required">No Android 8.1 e acima, a permissão de armazenamento é necessária para que os aplicativos acessem o papel de parede. Sem a permissão indicada, a Lawchair pode falhar ou mostrar comportamentos inesperados.</string>
+  <string name="disable_popup">Lembrar minha escolha</string>
+  <string name="backups">Backups</string>
+  <string name="new_backup">Criar</string>
+  <string name="restore_backup">Restaurar</string>
+  <string name="backup_name">Nome</string>
+  <string name="backup_location">Localização</string>
+  <string name="choose_backup_path">Navegar</string>
+  <string name="backup_homescreen">Tela Inicial</string>
+  <string name="backup_contents">Conteúdo de backup</string>
+  <string name="backup_settings">Importar configurações</string>
+  <string name="backup_wallpaper">Papel de parede</string>
+  <string name="backup_error_blank_name">O nome não pode ficar em branco</string>
+  <string name="backup_error_blank_location">O local não deve ficar em branco</string>
+  <string name="backup_error_blank_contents">O conteúdo não pode ficar em branco</string>
+  <string name="backup_creating">Criando backup</string>
+  <string name="no_recent_backups">Nenhum backup recente</string>
+  <string name="backup_loading">Carregando...</string>
+  <string name="backup_invalid">Indisponível</string>
+  <string name="backup_remove_from_recents">Remover da lista</string>
+  <string name="backup_share">Compartilhar</string>
+  <string name="backup_timestamp">Data de criação</string>
+  <string name="backup_restoring">Restaurando backup</string>
+  <string name="backup_restarting">Reiniciando</string>
+  <string name="restore_contents">Restaurar conteúdo</string>
+  <string name="restore_success">Restauração com sucesso</string>
+  <string name="backup_failed">Erro ao fazer backup</string>
+  <string name="restore_failed">Falha na restauração</string>
+  <string name="restore_read_meta_fail">Arquivo de backup inválido</string>
+  <string name="backup_share_title">Compartilhar backup</string>
+  <string name="backup_share_text">Arquivo de backup do Lawnchair</string>
+  <string name="read_external_storage_required">Permissão de armazenamento é necessária para criar backup</string>
+  <string name="local_backups">Backups locais</string>
+  <string name="backup_location_device_storage">Armazenamento do dispositivo</string>
+  <string name="backup_location_documents_storage">Armazenamento de documentos</string>
+  <!-- Preference Category Pixel Searchbar Title -->
+  <string name="pref_category_pixel_searchbar">Barra de pesquisa de Pixel</string>
+  <!-- Preference Category Icons Title -->
+  <string name="pref_category_icons">Ícones</string>
+  <!-- Preference Category Drawer Title -->
+  <string name="pref_category_drawer">Menu</string>
+  <!-- Preference Category Misc Title -->
+  <string name="pref_category_misc">Diversos</string>
+  <string name="blur_oom">Lawnchair ficou sem memória tentando desfocar seu papel de parede! Reduzir a resolução do papel de parede poderia resolver isso.</string>
+  <string name="legacy_backup">Arquivo de backup legado</string>
+  <!-- About screen -->
+  <string name="title_attribouter_licenses">Licenças Open Source</string>
+  <string name="title_attribouter_email">E-mail</string>
+  <string name="title_attribouter_website">Site</string>
+  <string name="title_attribouter_rate">Avaliar</string>
+  <string name="title_attribouter_version">Versão %1$s</string>
+  <string name="title_attribouter_license">Licença</string>
+  <string name="title_attribouter_license_permissions">Permissões</string>
+  <string name="title_attribouter_license_conditions">Condições</string>
+  <string name="title_attribouter_license_limitations">Limitações</string>
+  <string name="title_attribouter_more_info">Mais informações</string>
+  <string name="title_attribouter_translators">Tradutores</string>
+  <string name="about_our_team">Nossa equipe</string>
+  <string name="about_our_contributors">Principais colaboradores</string>
+  <string name="about_our_family">Outros membros da família</string>
+  <string name="about_role_lead">Programador principal</string>
+  <string name="about_role_devops">DevOps</string>
+  <string name="about_role_dev">Programador</string>
+  <string name="about_role_dev_mod">Programador / Moderador</string>
+  <string name="about_role_designer">Designer</string>
+  <string name="about_role_special_snowflake">Gestor de PR / Moderador</string>
+  <string name="about_role_mod_support">Moderador / Suporte</string>
+  <string name="about_role_family_member">Membro da família</string>
+  <string name="about_bio_deletescape">Programador Android &amp; entusiasta, adora memes (até demais). Criador do projeto Lawnchair.</string>
+  <string name="about_bio_divadsn">18 anos, transforma cafeína e pizza em código. Também conhecido como Codebucket.</string>
+  <string name="about_bio_recoded">Programador e designer gráfico.</string>
+  <string name="about_bio_josh">Designer gráfico independente.</string>
+  <string name="about_bio_chris">Mente criativa, influenciador &amp; Criador de conteúdos. Redes sociais e gestor de PR.</string>
+  <string name="about_bio_msfjarvis">Principal programador do halogenOS e programador de aplicações em substratum.</string>
 </resources>
