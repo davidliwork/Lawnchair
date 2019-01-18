@@ -61,7 +61,6 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
 
     override val weatherUnit by StringPref(PreferenceFlags.KEY_WEATHER_UNITS, PreferenceFlags.PREF_WEATHER_UNIT_METRIC)
     override val weatherCity by StringPref(PreferenceFlags.KEY_WEATHER_CITY, PreferenceFlags.PREF_WEATHER_DEFAULT_CITY)
-    override val showHidden by BooleanPref(PreferenceFlags.KEY_SHOW_HIDDEN, false)
 
     override fun migrationSrcHotseatCount(default: Int): Int {
         return getInt(PreferenceFlags.KEY_MIGRATION_SRC_HOTSEAT_COUNT, default)
@@ -253,6 +252,7 @@ open class PreferenceImpl(context: Context) : IPreferenceProvider {
     }
     override val useWhiteGoogleIcon by BooleanPref(FeatureFlags.KEY_PREF_WHITE_GOOGLE_ICON, false)
     override val ayyMatey by BooleanPref(PreferenceFlags.KEY_AYY_MATEY, false)
+    override val dt2sHandler by StringPref(FeatureFlags.KEY_PREF_DT2S_HANDLER, defaultValue = "")
     override fun migrateThemePref(context: Context) {
         val darkTheme = PreferenceProvider.getPreferences(context).darkTheme
         if (darkTheme) {

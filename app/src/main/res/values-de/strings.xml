@@ -246,7 +246,6 @@
   <!-- About Lawnchair -->
   <string name="about_title">Über</string>
   <string name="about_pref_summary">Lerne das Lawnchair-Team kennen</string>
-  <string name="changelog_title">Changelog für Build #%d</string>
   <string name="week_day_format">%1$s, %2$s</string>
   <string name="icon_pack_preference_title">Iconpack</string>
   <string name="icon_pack_preference_summary">Iconpack auswählen</string>
@@ -260,7 +259,7 @@
   <string name="blur_pref_title">Unschärfeeffekt verwenden</string>
   <string name="blur_pref_summary">Unschärfeeffekt auf Teile der Darstellung anwenden\nNicht mit Live-Hintergründen kompatibel</string>
   <string name="blur_radius_pref_title">Stärke des Unschärfeeffekts</string>
-  <string name="pref_iconLabelsInTwoLines">2 Zeilen für Appnamen erlauben</string>
+  <string name="pref_iconLabelsInTwoLines">2 Zeilen für Appnamen benutzen</string>
   <string name="white_google_icon_pref_title">Weiße Google-Icons verwenden</string>
   <string name="hide_icon_labels_pref_title">Keine Icon-Beschriftungen auf dem Startbildschirm</string>
   <string name="hide_all_apps_icon_labels_pref_title">Keine Icon-Beschriftungen in der App-Übersicht</string>
@@ -272,7 +271,7 @@
   <string name="icon_scale_pref_title">Icon-Größe</string>
   <string name="hotseat_height_scale">Höhen-Skalierung</string>
   <string name="hotseat_custom_opacity">Dock Transparenz</string>
-  <string name="hotseat_uses_custom_opacity">Benutzerdefinierte Dock-Transparenz aktivieren</string>
+  <string name="hotseat_uses_custom_opacity">Benutzerdefinierte Dock-Transparenz</string>
   <string name="icon_text_scale_pref_title">Größe Icon-Text</string>
   <string name="icon_text_padding_scale_pref_title">Skalierung des Padding für Icons</string>
   <string name="full_width_width_widgets_pref_title">Widgets mit voller Breite</string>
@@ -340,8 +339,14 @@
   <string name="pull_down_notis">Benachrichtigungsleiste anzeigen</string>
   <string name="pull_down_search">Suche öffnen</string>
   <string name="pull_down_apps_search">App-Suche</string>
-  <string name="enable_screen_rotation">Bildschirmrotation aktivieren</string>
+  <string name="enable_screen_rotation">Bildschirmrotation</string>
   <string name="use_system_fonts_title">Systemschriftart für Beschriftungen verwenden</string>
+  <string name="auto_add_shortcuts_label">Symbol zu Startbildschirm hinzufügen</string>
+  <string name="auto_add_shortcuts_description">Für neue Apps</string>
+  <string name="shortcut_blacklist">App-Verknüpfungen blockieren</string>
+  <string name="shortcut_blacklist_sum">Sperre bestimmten Apps das Hinzufügen neuer Symbole auf dem Startbildschirm</string>
+  <string name="blacklist_app">Gesperrte App</string>
+  <string name="blacklist_app_selected">&#160;ausgewählt</string>
   <!-- Import/Export Strings -->
   <string name="backup_import_title">Wiederherstellung</string>
   <string name="backup_export_title">Sicherung</string>
@@ -358,7 +363,7 @@
   <string name="units_imperial">Imperial</string>
   <!-- Default units to use, either 'metric' or 'imperial' -->
   <string name="pref_cat_weather">Wetter</string>
-  <string name="pref_weather_title">Wetter aktivieren</string>
+  <string name="pref_weather_title">Wetter</string>
   <string name="pref_weather_units">Maßeinheiten</string>
   <string name="pref_weather_city_summary">Für bessere Ergebnisse das Länderkürzel einfügen</string>
   <string name="pref_weather_city_title">Stadt</string>
@@ -389,7 +394,6 @@
   <string name="pref_backport_shortcuts">Backport App-Verknüpfungen</string>
   <string name="weather_api_key_not_set">API-Schlüssel nicht festgelegt</string>
   <string name="pref_weather_api_key_title">API-Schlüssel</string>
-  <string name="about_changelog">Änderungsprotokoll</string>
   <string name="pref_all_apps_custom_label_color">Verwende benutzerdefinierte Label-Farbe</string>
   <string name="pref_all_apps_label_color">Farbe der Icon-Labels in der App-Liste</string>
   <string name="pref_num_rows_drawer">Anzahl der Reihen in der App-Übersicht</string>
@@ -407,15 +411,16 @@
   <string name="enable_spring_pref_title">Aktiviere den Spring-Effekt</string>
   <string name="hide_app">App ausblenden</string>
   <string name="hide_app_sum">Apps in der App-Liste ausblenden</string>
-  <string name="hide_app_selected">&#160;ausgewählt</string>
   <string name="hidden_app">Ausgeblendete App</string>
-  <string name="hide_app_apply">Anwenden</string>
+  <string name="hidden_app_selected">&#160;ausgewählt</string>
+  <string name="list_app_apply">Anwenden</string>
+  <string name="list_app_reset">Zurücksetzen</string>
   <string name="unauthorized_device">Dieses Gerät hat ein paar Piraterie-Tools installiert. Um fortzufahren bitte deinstalliere diese.</string>
-  <string name="hide_app_reset">Zurücksetzen</string>
   <string name="two_row_dock">Zwei-Reihen Dock</string>
   <string name="reset_alternative_icons_title">Alternative App-Icons zurücksetzen?</string>
   <string name="reset_alternative_icons">Du hast %1$d Apps mit alternativen Icons, möchtest du sie zurücksetzen?</string>
   <string name="error_no_browser">Keine Aktivität gefunden, um URLs zu behandeln</string>
+  <string name="error_no_calendar">Keine Kalender-App installiert</string>
   <!-- Strings for popup dialogs -->
   <string name="lawnfeed_not_enabled_title">Lawnfeed nicht aktiviert</string>
   <string name="lawnfeed_not_enabled">Es sieht aus, als würdest du versuchen die Google Now-Seite zu öffnen, aber du hast die Option nicht in den Verhaltens-Optionen aktiviert.\n\nMöchtest du sie jetzt aktivieren?</string>
@@ -460,15 +465,15 @@
   <!-- Preference Category Pixel Searchbar Title -->
   <string name="pref_category_pixel_searchbar">Pixel Suchleiste</string>
   <!-- Preference Category Icons Title -->
-  <string name="pref_category_icons">Icons</string>
+  <string name="pref_category_icons">Symbole</string>
   <!-- Preference Category Drawer Title -->
-  <string name="pref_category_drawer">Ordner</string>
+  <string name="pref_category_drawer">App-Übersicht</string>
   <!-- Preference Category Misc Title -->
   <string name="pref_category_misc">Verschiedenes</string>
-  <string name="blur_oom">Lawnchair hat wegen der Unschärfe deine Hintergrundbildes nicht mehr genug freien Speicher! Möglichweise kannst du durch eine Reduzierung der Auflösung das Problem beheben.</string>
-  <string name="legacy_backup">Sicherungsdatei (alt)</string>
+  <string name="blur_oom">Lawnchair hat nicht mehr genug freien Arbeitsspeicher um dein Hintergrundbild unscharf zu stellen! Möglichweise kann eine Reduzierung der Bildauflösung das Problem beheben.</string>
+  <string name="legacy_backup">Alte Sicherungsdatei</string>
   <!-- About screen -->
-  <string name="title_attribouter_licenses">Open Source-Lizenzen</string>
+  <string name="title_attribouter_licenses">Open-Source Lizenzen</string>
   <string name="title_attribouter_email">E-Mail</string>
   <string name="title_attribouter_website">Webseite</string>
   <string name="title_attribouter_rate">Bewerten</string>
@@ -490,7 +495,18 @@
   <string name="about_role_special_snowflake">PR-Manager / Moderator</string>
   <string name="about_role_mod_support">Moderator / Support</string>
   <string name="about_role_family_member">Familienmitglied</string>
+  <string name="about_bio_deletescape">Android-Entwickler &amp; -Enthusiast. Mag Memes (fast ein bisschen zu sehr, um ehrlich zu sein). Gründer des Lawnchair Projekts.</string>
+  <string name="about_bio_divadsn">18 Jahre alt, verwandelt Koffein und Pizza in Code. Früher auch bekannt unter dem Namen Codebucket.</string>
   <string name="about_bio_recoded">Programmierer und Grafikdesigner</string>
   <string name="about_bio_josh">Freiberuflicher Grafikdesigner</string>
-  <string name="about_bio_msfjarvis">Chef-Entwickler bei halogenOS und App-Entwickler bei subtratum.</string>
+  <string name="about_bio_chris">Kreativer Geist, Influencer und Content Creator. Social Media und PR Manager.</string>
+  <string name="about_bio_msfjarvis">Hauptentwickler von halogenOS und App-Entwickler bei substratum.</string>
+  <!-- DT2S -->
+  <string name="dt2s_title">Doppeltippen zum Sperren</string>
+  <string name="dt2s_disabled">Deaktiviert</string>
+  <string name="dt2s_deviceadmin">Benutze Geräteadministrator</string>
+  <string name="dt2s_timeout">Benutze Bildschirm-Timeout</string>
+  <string name="dt2s_root">Benutze Root</string>
+  <string name="dt2s_admin_hint">Um \"Doppeltippen zum Sperren\" nutzen zu können, musst du Lawnchair als Geräteadministrator aktivieren. Dabei handelt es sich um eine sichere Sperre, so dass beim nächsten Entsperren deine PIN (wenn eingerichtet) eingegeben werden muss.</string>
+  <string name="dt2s_admin_warning">Wenn du für Lawnchair den Geräteadministrator deaktivierst, kannst du \"Doppeltippen zum Sperren\" nicht mehr nutzen.</string>
 </resources>

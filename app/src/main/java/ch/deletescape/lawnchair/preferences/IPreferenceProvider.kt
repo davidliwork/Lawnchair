@@ -29,8 +29,6 @@ interface IPreferenceProvider {
     // -------------------
 
     val allAppsOpacity: Float
-    // defines if hidden apps should be shown in drawer for changing their hidden state
-    val showHidden: Boolean
     val allAppsIconScale: Float
     val allAppsIconTextScale: Float
     val allAppsIconPaddingScale: Float
@@ -104,6 +102,7 @@ interface IPreferenceProvider {
     val iconLabelsInTwoLines: Boolean
     val twoRowDock: Boolean
     val pulldownAction: String
+    val dt2sHandler: String
 
     // -----------------
     // PREFERENCES
